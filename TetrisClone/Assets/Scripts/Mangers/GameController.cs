@@ -30,6 +30,8 @@ public class GameController : MonoBehaviour {
 
 	public GameObject gameOverPanel;
 
+	SoundManager soundManager;
+
 	// Use this for initialization
 	void Start () {
 
@@ -40,6 +42,7 @@ public class GameController : MonoBehaviour {
 
 		gameBoard = GameObject.FindObjectOfType<Board>();
 		spawner = GameObject.FindObjectOfType<Spawner>();
+		soundManager = GameObject.FindObjectOfType<SoundManager> ();
 
 		if (spawner) {
 			spawner.transform.position = Vectorf.Round (spawner.transform.position);
@@ -65,6 +68,9 @@ public class GameController : MonoBehaviour {
 
 			if (!gameBoard.IsValidPosition (activeShape)) {
 				activeShape.MoveLeft ();
+				playSound (soundManager.errorSound, 0.5f);
+			} else {
+				playSound (soundManager.moveSound, 0.5f);
 			}
 		} else if (Input.GetButton ("MoveLeft") && (Time.time > timeToNextKeyLeftRight) || Input.GetButtonDown ("MoveLeft")) {
 			activeShape.MoveLeft ();
@@ -72,6 +78,9 @@ public class GameController : MonoBehaviour {
 
 			if (!gameBoard.IsValidPosition (activeShape)) {
 				activeShape.MoveRight ();
+				playSound (soundManager.errorSound, 0.5f);
+			} else {
+				playSound (soundManager.moveSound, 0.5f);
 			}
 		} 
 		else if (Input.GetButtonDown ("Rotate") && (Time.time > timeToNextKeyRotate)) {
@@ -80,6 +89,9 @@ public class GameController : MonoBehaviour {
 
 			if (!gameBoard.IsValidPosition(activeShape)){
 				activeShape.RotateLeft ();
+				playSound (soundManager.errorSound, 0.5f);
+			} else {
+				playSound (soundManager.moveSound, 0.5f);
 			}
 		}
 		//自动下落和按键下落都放在这里了
@@ -112,13 +124,25 @@ public class GameController : MonoBehaviour {
 		timeToNextKeyRotate = Time.time;
 
 		gameBoard.ClearAllRows ();
+
+		playSound (soundManager.dropSound, 0.75f);
+
+		if (gameBoard.completedRows > 0) {
+
+			if (gameBoard.completedRows > 1){
+				AudioClip randomVocal = soundManager.GetRandomClip (soundManager.vocalClips);
+				playSound (randomVocal, 0.7f);
+			}
+
+			playSound (soundManager.clearRowSound, 1f);
+		}
 	}
 		
 
 	// Update is called once per frame
 	void Update () {
 
-		if (!gameBoard || !spawner || !activeShape || isGameOver)
+		if (!gameBoard || !spawner || !activeShape || isGameOver || !soundManager)
 			return;
 
 		PlayerInput ();
@@ -131,10 +155,19 @@ public class GameController : MonoBehaviour {
 		if (gameOverPanel) {
 			gameOverPanel.SetActive (true);
 		}
+
+		playSound (soundManager.gameOverSound, 5f);
+		playSound (soundManager.gameOverVocalClip, 5f);
 	}
 
 	public void Restart(){
 		SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex);
+	}
+
+	void playSound(AudioClip clip, float volMultiplier){
+		if(soundManager.fxEnabled && clip){
+			AudioSource.PlayClipAtPoint (clip, Camera.main.transform.position, Mathf.Clamp(soundManager.fxVolume * volMultiplier, 0.05f,1f));	
+		}
 	}
 }
  

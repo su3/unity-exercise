@@ -17,6 +17,7 @@ public class SoundManager : MonoBehaviour {
 	public AudioClip moveSound;
 	public AudioClip dropSound;
 	public AudioClip gameOverSound;
+	public AudioClip errorSound;
 
 	public AudioSource musicSource;
 
@@ -24,6 +25,9 @@ public class SoundManager : MonoBehaviour {
 	public AudioClip[] musicClips;
 	private AudioClip randomMusicClip;
 
+	public AudioClip[] vocalClips;
+
+	public AudioClip gameOverVocalClip;
 
 	// Use this for initialization
 	void Start () {
@@ -68,5 +72,9 @@ public class SoundManager : MonoBehaviour {
 	public void ToggleMusic(){
 		musicEnabled = !musicEnabled;
 		UpdateMusic ();
+	}
+
+	public void ToggleFX(){
+		fxEnabled = !fxEnabled;
 	}
 }

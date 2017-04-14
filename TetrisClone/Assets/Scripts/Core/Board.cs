@@ -15,6 +15,8 @@ public class Board : MonoBehaviour {
 
 	Transform [,] grid;
 
+	public int completedRows = 0;
+
 	void Awake(){
 		grid = new Transform[width, height];
 	}
@@ -105,8 +107,10 @@ public class Board : MonoBehaviour {
 	}
 
 	public void ClearAllRows(){
+		completedRows = 0;
 		for (int y = 0; y < height; ++y) {
 			if (IsComplete (y)) {
+				completedRows++;
 				ClearRow (y);
 				//把这一行之上的全部下移1个单位
 				ShiftRowsDown (y + 1);
