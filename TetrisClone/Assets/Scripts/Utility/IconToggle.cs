@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Image))]
+ [RequireComponent(typeof(Image))]
 public class IconToggle : MonoBehaviour {
 
 	public Sprite iconTrue;
