@@ -32,6 +32,9 @@ public class GameController : MonoBehaviour {
 
 	SoundManager soundManager;
 
+	public bool isPaused = false;
+	public GameObject pausePanel;
+
 	// Use this for initialization
 	void Start () {
 
@@ -53,6 +56,10 @@ public class GameController : MonoBehaviour {
 
 		if(gameOverPanel){
 			gameOverPanel.SetActive (false);
+		}
+
+		if(pausePanel){
+			pausePanel.SetActive (false);
 		}
 	}
 
@@ -142,7 +149,7 @@ public class GameController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (!gameBoard || !spawner || !activeShape || isGameOver || !soundManager)
+		if (!gameBoard || !spawner || !activeShape || isGameOver || !soundManager || isPaused)
 			return;
 
 		PlayerInput ();
@@ -161,6 +168,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void Restart(){
+		Time.timeScale = 1;
 		SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex);
 	}
 
@@ -169,5 +177,25 @@ public class GameController : MonoBehaviour {
 			AudioSource.PlayClipAtPoint (clip, Camera.main.transform.position, Mathf.Clamp(soundManager.fxVolume * volMultiplier, 0.05f,1f));	
 		}
 	}
+
+	public void TogglePause(){
+		if (isGameOver)
+			return;
+
+		isPaused = !isPaused;
+
+		if(pausePanel){
+			pausePanel.SetActive (isPaused);
+
+			if (soundManager) {
+				soundManager.musicSource.volume = isPaused ? soundManager.musicVolume * 0.25f : soundManager.musicVolume;
+			}
+
+			//暂停
+			Time.timeScale = isPaused ? 0 : 1;
+		}
+	}
+
+
 }
  
